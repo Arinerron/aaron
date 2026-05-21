@@ -70,7 +70,7 @@ static int aaron_accept_loop(void *data)
 int aaron_sock_start(unsigned short port, int backlog)
 {
 	struct sockaddr_in addr;
-	int ret, opt = 1;
+	int ret;
 
 	ret = sock_create_kern(&init_net, AF_INET, SOCK_STREAM, IPPROTO_TCP,
 			       &listen_sock);
@@ -79,17 +79,14 @@ int aaron_sock_start(unsigned short port, int backlog)
 		return ret;
 	}
 
-	ret = kernel_setsockopt(listen_sock, SOL_SOCKET, SO_REUSEADDR,
-				(char *)&opt, sizeof(opt));
-	if (ret)
-		pr_warn("SO_REUSEADDR failed: %d\n", ret);
+	sock_set_reuseaddr(listen_sock->sk);
 
 	memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = htonl(INADDR_ANY);
 	addr.sin_port = htons(port);
 
-	ret = kernel_bind(listen_sock, (struct sockaddr *)&addr, sizeof(addr));
+	ret = kernel_bind(listen_sock, (struct sockaddr_unsized *)&addr, sizeof(addr));
 	if (ret) {
 		pr_err("bind failed: %d\n", ret);
 		goto err;
