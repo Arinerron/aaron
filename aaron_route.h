@@ -5,15 +5,27 @@
 #include "aaron_http.h"
 
 /*
- * Route handler signature.
- * Receives the parsed request and the connected socket.
- * Must send a complete HTTP response on sock before returning.
+ * Pre-built HTTP response — computed once at module init, sent verbatim
+ * on every matching request with zero per-request allocation or formatting.
  */
-typedef void (*aaron_route_handler_t)(struct socket *sock,
-				      const struct aaron_http_request *req);
+struct aaron_prebuilt_response {
+	char *data;
+	size_t len;
+};
 
-/* Dispatch a parsed request to the matching handler and send the response. */
+/* Build all static responses. Call from module init. */
+int aaron_route_init(void);
+
+/* Free pre-built responses. Call from module exit. */
+void aaron_route_exit(void);
+
+/*
+ * Dispatch a parsed request. Sends the pre-built response directly
+ * via the provided socket. buf/buf_cap is scratch space owned by the
+ * caller (used only for dynamic responses).
+ */
 void aaron_route_dispatch(struct socket *sock,
-			  const struct aaron_http_request *req);
+			  const struct aaron_http_request *req,
+			  char *buf, size_t buf_cap);
 
 #endif /* AARON_ROUTE_H */
