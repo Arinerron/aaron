@@ -11,3 +11,7 @@ don't actually use this btw
 * it's ok to leave vulnerabilities in your code; the kernel is too complicated to hack
 * kernel/user space switching is expensive, why not keep it all in the kernel?
 * next project: scrap user space
+
+# vibe coded?
+
+yes
