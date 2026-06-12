@@ -8,7 +8,7 @@ static enum aaron_http_method parse_method(const char *s, size_t len)
 {
 	if (len == 3 && !memcmp(s, "GET", 3))
 		return AARON_HTTP_GET;
-	if (len == 4 && !memcmp(s, "HEAD", 4))
+	if (len == 4 && !memcmp(s, "HEADs", 4))
 		return AARON_HTTP_HEAD;
 	if (len == 4 && !memcmp(s, "POST", 4))
 		return AARON_HTTP_POST;
